@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="container my-5 py-5">
+
+        <!-- card things to do  -->
+
+            <div class="card text-center">
+                <!-- card-header  -->
+                <div class="card-header">
+                Things To Do
+                </div>
+
+            {% for todo in todos %}
+                <div class="card">
+                    <div class="card-body text-left">
+                        <h3 class="card-title font-weight-bold">{{todo.title}}</h3>
+                        <p class="card-text">{{todo.text}}</p>
+                        <a href="{{ url_for('delete', id=todo.id) }}" class="text-small font-weight-light text-muted"">delete this task</a>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        
+
+        <!-- formulaire pour ajouter des tâches -->
+
+        <div class="card text-center">
+        <div class="card-body">
+            <p class="card-text">add your own task!</p>
+            <form action="{{ url_for('add') }}" method="POST">
+                <div class="my-1">
+                <input class="form-control form-control-lg" required="true" type="text" placeholder="Task's title" name="title">
+                </div>
+                <div class="my-1">
+                <input class="form-control form-control-lg" required="true" type="text-area" placeholder="Task's text" name="text"> 
+                </div>
+                <div class="mt-3">
+                <input type="submit" value="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+        <!-- footer de la carte  -->
+        <div class="card-footer">
+        </div>
+        </div>
+    </div>
+
+{% endblock content %}

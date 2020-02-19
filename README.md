@@ -171,7 +171,36 @@ Dans le dossier template, nous allons créer un fichier "index.html". Dans leque
 
 ```
 
-Pour que cela fonctionne, dans le fichier "todo.py", nous se dirige dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html".  
+Pour que cela fonctionne, dans le fichier "todo.py", nous se dirige dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html":  
+
+```python
+@app.route("/")
+@app.route("/home")
+def index():
+    return render_template("index.html")
+```
+
+## Des conditions dans l'html
+
+Oui, c'est possible et c'est même très simple avec flask !
+
+pour ca on vas se diriger dans notre fichier "layout.html", et dans le head, on vas remplacer la balise title par:
+
+```html
+{% if title %}
+        <title>ToDo - {{ title }}</title>
+    {% else %}
+        <title>Todo</title>
+    {% endif %}
+```
+pour l'instant rien ne change, parce que l'on essaye de voir si une variable 'title' est déclaré, ce qui n'est pas le cas. Pour arranger cela, on se dirige vers notre fichier "todo.py" et on ajoute à notre route:
+
+```python
+@app.route("/")
+@app.route("/home")
+def index():
+    return render_template("index.html", title="Home")
+```
 
 ## Afficher des données  
 
@@ -208,8 +237,8 @@ mais d'où vient se tasks ? eh bien pour le moment il ne le sait pas (vous avez 
 @app.route("/")
 @app.route("/home")
 def index():
-    return render_template('index.html', tasks=tasks)
-```  
+    return render_template('index.html', title='Home', tasks=tasks)
+```   
 
 il vous faudra peut-être redémarer votre serveur suite à votre message d'erreur (dans le terminal ctrl+c et ensuite on retape python3 todo.py) mais on peut déjà voir à quoi vas ressembler le projet final. Le problème c'est que pour le moment, notre appliquation n'est pas du tout utilisable car il nous manque le plus important !
 
@@ -261,7 +290,7 @@ db = SQLAlchemy(app)
 @app.route('/')
 @app.route('/home')
 def index():
-    return render_template('index.html', tasks=tasks)
+    return render_template('index.html', title='Home', tasks=tasks)
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -396,7 +425,7 @@ Pour réglé le problème il vas faloir d'abord passer les données de notre bas
 @app.route('/home')
 def index():
     todos = Todo.query.all()
-    return render_template('index.html', todos=todos)
+    return render_template('index.html', title='Home' todos=todos)
 ```
 
 une fois que ca c'est fait, on retourne vers notre fichier "index.html" et on remplace le code que l'on y avait ajouter par:
@@ -418,5 +447,58 @@ Ce qui fait que l'on devrait avoir ceci comme code: [pour todo](todo.py) et [pou
 
 ## Supprimer des éléments de la base de donnée.
 
+Pour ne pas bêtement reproduire la même technique que lors de l'ajout de données, et par soucis de vous montrer une autre façon de faire, nous allons maintenant nous donner la possibilité de supprimer via le site les éléments que l'on à ajouter dans notre base de donnée.
 
+Aviez vous remarquer que dans le code que l'on génère pour chaque élément de notre base de donnée se trouve un lien qui dit 'delete this task' ?
 
+eh bien bingo, on vas procéder via ce lien !
+
+pour pouvoir traiter les informations, on vas encore une fois créer une route.
+
+dans le fichier todo.py on ajoute en dessous des deux autres routes:
+
+```python
+@app.route('/delete')
+def delete(id):
+```
+
+on peux donc maintenant faire en sorte que notre lien redirige vers cette page ! Pour ca on se redirige vers notre fichier "index.html" et dans l'attribut href de notre lien on indique:
+
+`href="{{ url_for('delete', id=todo.id) }}" `
+
+Oh, mais il y à un petit quelque chose en plus ! 
+
+Eh bien oui, pour pouvoir cibler l'élément de la base de donnée que l'on veux supprimer, j'ai décidé que l'on vas procédé via l'id de l'élément en question. Bien sûr ce n'est pas la seul façon de procédé, libre à vous de tenter d'autres choses !
+
+Bon, ok, on indique quel est l'id de l'élément, mais comment l'utilise t-on ?
+
+Il faut tout dabord indiquer à notre route (eh oui, encore et toujours) que ce fameux id existe.
+
+Pour cela on se rend dans notre fichier "todo.py" et on indique dans notre route "delete"
+
+```python
+@app.route('/delete/<id>')
+def delete(id):
+```
+
+une fois ceci fait, on peux utiliser cet id dans notre fonction.
+
+```python
+@app.route('/delete/<id>')
+def delete(id):
+    Todo.query.filter_by(id=int(id)).delete()
+    db.session.commit()
+    return redirect(url_for('index'))
+```
+Encore une fois (merci python) le code parle de lui même: 
+
+quand on clique sur le lien:
+
+- On est rediriger vers notre page "delete" 
+- On fais une requête à notre base de donnée pour qu'elle trouve l'elément qui à l'id que l'on cherche (je le convertis en int parce que l'on est jamais trop prudent) et le supprime
+- On commit le changement dans la base de donnée
+- On redirige vers la page index
+
+Si tout c'est bien passer, vous devriez avoir ce code ci dans vos fichier [todo](todo_final.py), [index](index_final.html) et [layout](layout_final.html)
+
+Vous avez désormais une to do liste fonctionelle, qui vous permettra de ne jamais plus oublier vos challenges of the week ! 
