@@ -1,32 +1,49 @@
 # Workshop-Flask
 
 ## Environement Virtuel
+on ouvre un terminal:  
 ` ctrl + alt + t `  
+
 Vérifier la version de python:  
 ` python3 -V`  
+
 Installer le seteur d'environement:  
 `sudo apt install python3-venv `  
+
 Créer le dossier de votre projet:  
 ` mkdir flask-todo`  
+
 Dans le dossier du projet:  
-` python3 -m venv todo-env`  
+` python3 -m venv todo-env` 
+
 Activation de l'environement virtuel Python:  
-` source todo-env/bin/activate `  
-(Pour le désactiver: deactivate)  
+` source todo-env/bin/activate ` 
+
+(Pour le désactiver, simplement: deactivate)  
   
 ## Autre installations recquises  
+
+
 Installation SQLite  
 ` sudo apt install sqlite3`  
+
 Installation Flask:  
 ` pip install flask`  
+
 Installation SQLAlchemy:    
 ` pip install flask_sqlalchemy`  
 
+
 ## Une application en 7 lignes  
+
+
 Création du fichier todo.py:  
 ` touch todo.py`  
+
 Ouvrez le dossier dans VsCode.
+
 Copiez/collez ce code dans le fichier todo.py:  
+
 ```python
 from flask import Flask
 app = Flask(__name__)
@@ -153,7 +170,8 @@ Dans le dossier template, nous allons créer un fichier "index.html". Dans leque
 {% endblock content %}
 
 ```
-Pour que cela fonctionne, dans le fichier "todo.py", nous allons dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html".  
+
+Pour que cela fonctionne, dans le fichier "todo.py", nous se dirige dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html".  
 
 ## Afficher des données  
 
@@ -170,7 +188,9 @@ tasks = [
 }
 ]
 ```
+
 Pour les afficher dans notre page, nous allons ajouter au fichier "index.html", sous le commentaire "Block à ajouter ensuite" :  
+
 ```html
             {% for task in tasks %}
                 <div class="card">
@@ -182,13 +202,91 @@ Pour les afficher dans notre page, nous allons ajouter au fichier "index.html", 
                 </div>
             {% endfor %}
 ```
+mais d'où vient se tasks ? eh bien pour le moment il ne le sait pas (vous avez sûrement eu un message d'erreur !) pour que render_template ai accès à la lise que l'on à déclarer il y a deux minutes, il faudra simplement le lui spécifier comme ceci:  
+
+```python
+@app.route("/")
+@app.route("/home")
+def index():
+    return render_template('index.html', tasks=tasks)
+```  
+
+il vous faudra peut-être redémarer votre serveur suite à votre message d'erreur (dans le terminal ctrl+c et ensuite on retape python3 todo.py) mais on peut déjà voir à quoi vas ressembler le projet final. Le problème c'est que pour le moment, notre appliquation n'est pas du tout utilisable car il nous manque le plus important !
+
+## Aussi léger qu'une base de données
+
+Vous vous souvenez de la partie goûte à goûte ? c'est ici qu'elle prend son sens. Pour pouvoir utiliser facilement une base de donnée avec flask, surtout en phase de production, il existe un add-on super efficace: SQL Alchemy !
+
+vous l'avez déjà installer dans votre environement virtuel tout à l'heure, maintenant il ne nous reste plus qu'à l'importer pour pouvoir l'utiliser.
+
+Tout au dessus de notre fichier "todo.py" on vas ajouter :
+
+```python
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+```  
+
+Maintenant qu'il est importer on vas l'initialiser et lui dire où elle se trouve en ajoutant juste en dessous de notre app: 
+
+```python
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+db = SQLAlchemy(app)
+```
+
+vous devriez donc avoir un code qui ressemble à ceci:
+
+```python
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 
+tasks = [
+{
+'title' : 'bonjour',
+'text' : 'ca vas ?'
+},
+{
+'title' : 'oui',
+'text' : 'et toi ?'
+}
+]
 
 
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+db = SQLAlchemy(app)
 
 
+@app.route('/')
+@app.route('/home')
+def index():
+    return render_template('index.html', tasks=tasks)
 
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+Maintenant on vas donner forme à la table de notre base de donnée en ajoutant ce bout de code en dessous de l'initialisation de notre base de donnée:
+
+```python 
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
+    text = db.Column(db.String(200))
+```
+
+Ensuite, on se rend dans la console à la racine de notre projet et on indique:
+
+`sqlite3 todo.db`
+
+une fois dans la base de donnée, pour pouvoir la "créer" on indique:
+
+`.tables`
+
+à ce niveau rien ne se passe dans le terminal, mais si on regarde dans notre dossier, un nouveau fichier nommé todo.db vient d'apparêtre. Pour sortir de sqlite3 on indique:
+
+`.exit`
 
 
 
