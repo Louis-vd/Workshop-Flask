@@ -284,9 +284,139 @@ une fois dans la base de donnée, pour pouvoir la "créer" on indique:
 
 `.tables`
 
-à ce niveau rien ne se passe dans le terminal, mais si on regarde dans notre dossier, un nouveau fichier nommé todo.db vient d'apparêtre. Pour sortir de sqlite3 on indique:
+à ce niveau rien ne se passe dans le terminal, mais si on regarde dans notre dossier, un nouveau fichier nommé todo.db vient d'apparaitre. Pour sortir de sqlite3 on indique:
 
 `.exit`
+
+c'est bien, il y a une base de donnée, mais ce n'est pas encore la notre à proprement parler. Pour ca, toujours dans le terminal, on entre dans la console python 
+
+`python3`
+
+et ensuite:
+
+`from todo import db`
+
+et enfin:
+
+`db.create_all()`
+
+et on sors de la console.
+
+`exit()`
+
+Pour l'instant rien ne nous indique que notre base de donnée soit bien faite, alors allons vérifier par nous même ! toujours dans le terminal:
+
+`sqlite3 todo.db`
+
+une fois dans la base de donnée, lorsque l'on fais
+
+`.tables`
+
+la console doit normalement nous retourner le nom de la table que nous avons créer plus tôt: Todo
+
+une fois vérifier, on peux simplement quitter la base de donnée en faisant un simple
+
+`.exit`
+
+
+## on a une base de donnée et un formulaire ....
+
+Dans le code que l'on à copier dans le fichier "index.html" se trouve un formulaire. Pour l'instant celui ci ne redirige vers rien, mais nous allons nous en charger !
+
+Tout d'abords nous allons ajouter à notre flask trois modules qui vont nous être très utile: redirect, request, url_for. Leurs nom sont assez explicite non ? 
+
+on vas donc les ajouter tout au dessus de votre fichier "todo.py", comme ceci:
+
+```python
+from flask import Flask, render_template, redirect, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+```
+
+Comme tout bon dev, nous allons traiter les information de manières invisible. pour celà nous allons devoir rediriger notre formulaire vers une autre page. Et pour créer une autre page avec flask, il suffit simplement de créer une autre route !
+
+en dessous du notre première route, nous allons donc ajouter ceci:
+
+```python 
+@app.route('/add')
+def add():
+    
+```
+
+Simple, n'est-ce pas ?
+
+La prochaine étape consiste à rediriger vers cette page lorsque l'on clique sur le bouton du formulaire. pour ce faire, on vas cette fois sur le fichier "index.html" et dans l'attribut href de notre formulaire on indique:
+
+`href="{{ url_for('add') }}"`
+
+ca suffira à faire rediriger vers notre page "add". A notter qu'ici l'argument que l'on passe dans la fonction url_for() est le nom de la fonction de nottre route et non pas la route elle même !
+
+Pour l'instant, c'est bien beau on redirige vers la page, mais il ne se passe rien ! Pour remédier à ca on se redirige vers notre fichier "todo.py" et on vas y ajouter deux trois petite choses. 
+
+Premièrement, il faut indiquer à notre route qu'elle peut accepter les requêtes de type POST (celle que l'on utilise avec notre formulaire).
+
+sur la route de notre page "add" on vas indiquer:
+
+```python
+@app.route('/add', methods=['POST'])
+def add():
+```
+
+Maintenant que ca c'est fait, il faut traiter les données que l'on récupère avec ce formulaire. Pour ce faire on vas étoffé notre fonction:
+
+```python
+@app.route('/add', methods=['POST'])
+def add():
+    if request.method == 'POST':
+        task = Todo(title=request.form['title'], text=request.form['text'])
+        db.session.add(task)
+        db.session.commit()
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
+```
+
+si ce bout de code vous fait peur, pas de panique, je vais vous l'expliquer:
+
+Quand on est redirigé vers la page add à l'aide du formulaire:
+
+- On vérifie qu'on est bien arrivé là par une requête POST (on ne sais jamais)
+- On assigne dans une variable les données du formulaire spécialement formatée pour notre base de donnée
+- On ajoute ces données à notre base de donnée 
+- Et on commit 
+
+Sinon on redirige vers la page index
+
+
+C'est plutôt pas mal pour le moment, si on oublie le fait qu'on affiche pas les bonnes données dans la page ! 
+
+Pour réglé le problème il vas faloir d'abord passer les données de notre base de donnée dans notre route:
+
+```python
+@app.route('/')
+@app.route('/home')
+def index():
+    todos = Todo.query.all()
+    return render_template('index.html', todos=todos)
+```
+
+une fois que ca c'est fait, on retourne vers notre fichier "index.html" et on remplace le code que l'on y avait ajouter par:
+
+```html
+% for todo in todos %}
+                <div class="card">
+                    <div class="card-body text-left">
+                        <h3 class="card-title font-weight-bold">{{todo.title}}</h3>
+                        <p class="card-text">{{todo.text}}</p>
+                        <a href="#" class="text-small font-weight-light text-muted"">delete this task</a>
+                    </div>
+                </div>
+            {% endfor %}
+```
+
+Ce qui fait que l'on devrait avoir ceci comme code: [pour todo](todo.py) et [pour index](index-2.html)
+
+
+## Supprimer des éléments de la base de donnée.
 
 
 
