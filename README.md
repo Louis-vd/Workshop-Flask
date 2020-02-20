@@ -432,7 +432,7 @@ def index():
 une fois que ca c'est fait, on retourne vers notre fichier "index.html" et on remplace le code que l'on y avait ajouter par:
 
 ```html
-% for todo in todos %}
+{% for todo in todos %}
                 <div class="card">
                     <div class="card-body text-left">
                         <h3 class="card-title font-weight-bold">{{todo.title}}</h3>
@@ -460,7 +460,7 @@ dans le fichier todo.py on ajoute en dessous des deux autres routes:
 
 ```python
 @app.route('/delete')
-def delete(id):
+def delete():
     return 'coucou'
 ```
 
@@ -481,6 +481,7 @@ Pour cela on se rend dans notre fichier "todo.py" et on indique dans notre route
 ```python
 @app.route('/delete/<id>')
 def delete(id):
+    return 'coucou'
 ```
 
 une fois ceci fait, on peux utiliser cet id dans notre fonction.
