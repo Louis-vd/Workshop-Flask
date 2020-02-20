@@ -368,6 +368,7 @@ en dessous du notre première route, nous allons donc ajouter ceci:
 ```python 
 @app.route('/add')
 def add():
+    return 'coucou'
     
 ```
 
@@ -460,6 +461,7 @@ dans le fichier todo.py on ajoute en dessous des deux autres routes:
 ```python
 @app.route('/delete')
 def delete(id):
+    return 'coucou'
 ```
 
 on peux donc maintenant faire en sorte que notre lien redirige vers cette page ! Pour ca on se redirige vers notre fichier "index.html" et dans l'attribut href de notre lien on indique:
