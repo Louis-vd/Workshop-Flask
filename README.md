@@ -7,7 +7,7 @@ on ouvre un terminal:
 Vérifier la version de python:  
 ` python3 -V`  
 
-Installer le seteur d'environement:  
+Installer le seteur d'environnement:  
 `sudo apt install python3-venv `  
 
 Créer le dossier de votre projet:  
@@ -21,7 +21,7 @@ Activation de l'environement virtuel Python:
 
 (Pour le désactiver, simplement: deactivate)  
   
-## Autre installations recquises  
+## Autres installations recquises  
 
 
 Installation SQLite  
@@ -73,10 +73,10 @@ Vous devriez avoir ce code la :
 def index():
     return render_template("layout.html")
 ```  
-Pour le moment on essaye d'utiliser quelque chose qui n'existe pas... du coup, créons le !  
+Pour le moment on essaie d'utiliser quelque chose qui n'existe pas... du coup, créons le !  
 
 Création d'un dossier "templates" dans lequel on va créer un fichier "layout.html".  
-Dans le fichier "layout.html" écrivez :  
+Dans le fichier "layout.html", écrivez :  
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +124,7 @@ integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifw
 </body>
 </html>
 ```
-Pour le moment, nous n'avons qu'un header et un footer. Mais grace à render_template, nous allons pouvoir rendre ca beaucoup plus intéressant.  
+Pour le moment, nous n'avons qu'un header et un footer. Mais grâce à render_template, nous allons pouvoir rendre ca beaucoup plus intéressant.  
 Dans le dossier template, nous allons créer un fichier "index.html". Dans lequel nous allons écrire :  
 ```html
 {% extends 'layout.html' %}
@@ -171,7 +171,7 @@ Dans le dossier template, nous allons créer un fichier "index.html". Dans leque
 
 ```
 
-Pour que cela fonctionne, dans le fichier "todo.py", nous se dirige dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html":  
+Pour que cela fonctionne, dans le fichier "todo.py", nous allons nous diriger dans render_template qui se trouve dans la route et nous allons remplacer le "layout.html" par "index.html":  
 
 ```python
 @app.route("/")
@@ -184,7 +184,7 @@ def index():
 
 Oui, c'est possible et c'est même très simple avec flask !
 
-pour ca on vas se diriger dans notre fichier "layout.html", et dans le head, on vas remplacer la balise title par:
+pour ça on va se diriger dans notre fichier "layout.html", et dans le head, on va remplacer la balise title par:
 
 ```html
 {% if title %}
@@ -193,7 +193,7 @@ pour ca on vas se diriger dans notre fichier "layout.html", et dans le head, on 
         <title>Todo</title>
     {% endif %}
 ```
-pour l'instant rien ne change, parce que l'on essaye de voir si une variable 'title' est déclaré, ce qui n'est pas le cas. Pour arranger cela, on se dirige vers notre fichier "todo.py" et on ajoute à notre route:
+pour l'instant rien ne change, parce que l'on essaie de voir si une variable 'title' est déclarée, ce qui n'est pas le cas. Pour arranger cela, on se dirige vers notre fichier "todo.py" et on ajoute ce code à notre route:
 
 ```python
 @app.route("/")
@@ -231,7 +231,7 @@ Pour les afficher dans notre page, nous allons ajouter au fichier "index.html", 
                 </div>
             {% endfor %}
 ```
-mais d'où vient se tasks ? eh bien pour le moment il ne le sait pas (vous avez sûrement eu un message d'erreur !) pour que render_template ai accès à la lise que l'on à déclarer il y a deux minutes, il faudra simplement le lui spécifier comme ceci:  
+mais d'où vient cette variable "tasks" ? Et bien pour le moment Flask ne le sait pas (vous avez sûrement eu un message d'erreur !). Pour que render_template ait accès à la liste que l'on a déclaré il y a deux minutes, il faudra simplement le lui spécifier comme ceci:  
 
 ```python
 @app.route("/")
@@ -240,7 +240,7 @@ def index():
     return render_template('index.html', title='Home', tasks=tasks)
 ```   
 
-il vous faudra peut-être redémarer votre serveur suite à votre message d'erreur (dans le terminal ctrl+c et ensuite on retape python3 todo.py) mais on peut déjà voir à quoi vas ressembler le projet final. Le problème c'est que pour le moment, notre appliquation n'est pas du tout utilisable car il nous manque le plus important !
+il vous faudra peut-être redémarer votre serveur suite à votre message d'erreur (dans le terminal ctrl+c et ensuite on retape python3 todo.py) mais on peut déjà voir à quoi va ressembler le projet final. Le problème c'est que pour le moment, notre application n'est pas du tout utilisable car il nous manque le plus important !
 
 ## Aussi léger qu'une base de données
 
@@ -248,14 +248,14 @@ Vous vous souvenez de la partie goûte à goûte ? c'est ici qu'elle prend son s
 
 vous l'avez déjà installer dans votre environement virtuel tout à l'heure, maintenant il ne nous reste plus qu'à l'importer pour pouvoir l'utiliser.
 
-Tout au dessus de notre fichier "todo.py" on vas ajouter :
+Tout au dessus de notre fichier "todo.py" on va ajouter :
 
 ```python
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 ```  
 
-Maintenant qu'il est importer on vas l'initialiser et lui dire où elle se trouve en ajoutant juste en dessous de notre app: 
+Maintenant qu'il est importé on va l'initialiser et lui dire où elle se trouve en ajoutant juste en dessous de notre app: 
 
 ```python
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
@@ -296,7 +296,7 @@ if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-Maintenant on vas donner forme à la table de notre base de donnée en ajoutant ce bout de code en dessous de l'initialisation de notre base de donnée:
+Maintenant on va donner forme à la table de notre base de donnée en ajoutant ce bout de code en dessous de l'initialisation de notre base de donnée:
 
 ```python 
 class Todo(db.Model):
@@ -317,7 +317,7 @@ une fois dans la base de donnée, pour pouvoir la "créer" on indique:
 
 `.exit`
 
-c'est bien, il y a une base de donnée, mais ce n'est pas encore la notre à proprement parler. Pour ca, toujours dans le terminal, on entre dans la console python 
+C'est bien, il y a une base de donnée, mais ce n'est pas encore la nôtre à proprement parler. Pour ça, toujours dans le terminal, on entre dans la console python 
 
 `python3`
 
@@ -337,33 +337,33 @@ Pour l'instant rien ne nous indique que notre base de donnée soit bien faite, a
 
 `sqlite3 todo.db`
 
-une fois dans la base de donnée, lorsque l'on fais
+une fois dans la base de donnée, lorsque l'on fait
 
 `.tables`
 
-la console doit normalement nous retourner le nom de la table que nous avons créer plus tôt: Todo
+la console doit normalement nous retourner le nom de la table que nous avons créé plus tôt: Todo
 
-une fois vérifier, on peux simplement quitter la base de donnée en faisant un simple
+une fois vérifiée, on peux simplement quitter la base de donnée en faisant un simple
 
 `.exit`
 
 
 ## on a une base de donnée et un formulaire ....
 
-Dans le code que l'on à copier dans le fichier "index.html" se trouve un formulaire. Pour l'instant celui ci ne redirige vers rien, mais nous allons nous en charger !
+Dans le code que l'on a copié dans le fichier "index.html" se trouve un formulaire. Pour l'instant celui-ci ne redirige vers rien, mais nous allons nous en charger !
 
-Tout d'abords nous allons ajouter à notre flask trois modules qui vont nous être très utile: redirect, request, url_for. Leurs nom sont assez explicite non ? 
+Tout d'abord nous allons ajouter à notre flask trois modules qui vont nous être très utiles: redirect, request, url_for. Leurs noms sont assez explicites non ? 
 
-on vas donc les ajouter tout au dessus de votre fichier "todo.py", comme ceci:
+on va donc les ajouter tout au dessus de votre fichier "todo.py", comme ceci:
 
 ```python
 from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 ```
 
-Comme tout bon dev, nous allons traiter les information de manières invisible. pour celà nous allons devoir rediriger notre formulaire vers une autre page. Et pour créer une autre page avec flask, il suffit simplement de créer une autre route !
+Comme tout bon dev, nous allons traiter les informations de manière invisible. Pour cela nous allons devoir rediriger notre formulaire vers une autre page. Pour créer une autre page avec flask, il suffit simplement de créer une autre route !
 
-en dessous du notre première route, nous allons donc ajouter ceci:
+en dessous de notre première route, nous allons donc ajouter ceci:
 
 ```python 
 @app.route('/add')
@@ -378,20 +378,22 @@ La prochaine étape consiste à rediriger vers cette page lorsque l'on clique su
 
 `href="{{ url_for('add') }}"`
 
-ca suffira à faire rediriger vers notre page "add". A notter qu'ici l'argument que l'on passe dans la fonction url_for() est le nom de la fonction de nottre route et non pas la route elle même !
+ça suffira à rediriger vers notre page "add". Notez qu'ici l'argument que l'on passe dans la fonction url_for() est le nom de la fonction de notre route et non pas la route elle-même !
 
-Pour l'instant, c'est bien beau on redirige vers la page, mais il ne se passe rien ! Pour remédier à ca on se redirige vers notre fichier "todo.py" et on vas y ajouter deux trois petite choses. 
+Pour l'instant, c'est bien beau! On redirige vers la page, mais... il ne se passe rien ! 
+Pour remédier à cela, on se dirige vers notre fichier "todo.py" et on y ajoute deux trois petites choses. 
 
 Premièrement, il faut indiquer à notre route qu'elle peut accepter les requêtes de type POST (celle que l'on utilise avec notre formulaire).
 
-sur la route de notre page "add" on vas indiquer:
+Sur la route de notre page "add" on vas indiquer:
 
 ```python
 @app.route('/add', methods=['POST'])
 def add():
 ```
 
-Maintenant que ca c'est fait, il faut traiter les données que l'on récupère avec ce formulaire. Pour ce faire on vas étoffé notre fonction:
+Maintenant que c'est fait, il faut traiter les données que l'on récupère avec ce formulaire. 
+Pour ce faire on va étoffer notre fonction:
 
 ```python
 @app.route('/add', methods=['POST'])
@@ -405,21 +407,21 @@ def add():
         return redirect(url_for('index'))
 ```
 
-si ce bout de code vous fait peur, pas de panique, je vais vous l'expliquer:
+Si ce bout de code vous fait peur, pas de panique, je vais vous l'expliquer:
 
 Quand on est redirigé vers la page add à l'aide du formulaire:
 
-- On vérifie qu'on est bien arrivé là par une requête POST (on ne sais jamais)
-- On assigne dans une variable les données du formulaire spécialement formatée pour notre base de donnée
-- On ajoute ces données à notre base de donnée 
-- Et on commit 
+- On vérifie qu'on est bien arrivé là par une requête POST (on ne sait jamais)
+- On assigne à une variable les données du formulaire spécialement formatées pour notre base de données
+- On ajoute ces données à notre base de données 
+- Et on commit
 
 Sinon on redirige vers la page index
 
 
-C'est plutôt pas mal pour le moment, si on oublie le fait qu'on affiche pas les bonnes données dans la page ! 
+C'est plutôt pas mal pour le moment, si on oublie le fait qu'on n'affiche pas les bonnes données dans la page ! 
 
-Pour réglé le problème il vas faloir d'abord passer les données de notre base de donnée dans notre route:
+Pour régler le problème il va falloir d'abord passer les données de notre base de données dans notre route:
 
 ```python
 @app.route('/')
@@ -429,7 +431,7 @@ def index():
     return render_template('index.html', title='Home' todos=todos)
 ```
 
-une fois que ca c'est fait, on retourne vers notre fichier "index.html" et on remplace le code que l'on y avait ajouter par:
+une fois que c'est fait, on retourne vers notre fichier "index.html" et on remplace le code que l'on y avait ajouté par:
 
 ```html
 {% for todo in todos %}
@@ -446,17 +448,17 @@ une fois que ca c'est fait, on retourne vers notre fichier "index.html" et on re
 Ce qui fait que l'on devrait avoir ceci comme code: [pour todo](todo.py) et [pour index](index-2.html)
 
 
-## Supprimer des éléments de la base de donnée.
+## Supprimer des éléments de la base de données.
 
-Pour ne pas bêtement reproduire la même technique que lors de l'ajout de données, et par soucis de vous montrer une autre façon de faire, nous allons maintenant nous donner la possibilité de supprimer via le site les éléments que l'on à ajouter dans notre base de donnée.
+Pour ne pas bêtement reproduire la même technique que lors de l'ajout de données, et par soucis de vous montrer une autre façon de faire, nous allons maintenant nous donner la possibilité de supprimer via le site les éléments que l'on a ajouté dans notre base de données.
 
-Aviez vous remarquer que dans le code que l'on génère pour chaque élément de notre base de donnée se trouve un lien qui dit 'delete this task' ?
+Aviez-vous remarqué que dans le code que l'on génère pour chaque élément de notre base de données se trouve un lien qui dit 'delete this task' ?
 
-eh bien bingo, on vas procéder via ce lien !
+Et bien bingo, on va procéder via ce lien !
 
-pour pouvoir traiter les informations, on vas encore une fois créer une route.
+Pour pouvoir traiter les informations, on va encore une fois créer une route.
 
-dans le fichier todo.py on ajoute en dessous des deux autres routes:
+Dans le fichier todo.py , on ajoute en dessous des deux autres routes:
 
 ```python
 @app.route('/delete')
@@ -464,17 +466,17 @@ def delete():
     return 'coucou'
 ```
 
-on peux donc maintenant faire en sorte que notre lien redirige vers cette page ! Pour ca on se redirige vers notre fichier "index.html" et dans l'attribut href de notre lien on indique:
+on peux donc maintenant faire en sorte que notre lien redirige vers cette page ! Pour ça on se redirige vers notre fichier "index.html" et dans l'attribut href de notre lien on indique:
 
 `href="{{ url_for('delete', id=todo.id) }}" `
 
-Oh, mais il y à un petit quelque chose en plus ! 
+Oh, mais il y a un petit quelque chose en plus ! 
 
-Eh bien oui, pour pouvoir cibler l'élément de la base de donnée que l'on veux supprimer, j'ai décidé que l'on vas procédé via l'id de l'élément en question. Bien sûr ce n'est pas la seul façon de procédé, libre à vous de tenter d'autres choses !
+Et bien oui, pour pouvoir cibler l'élément de la base de données que l'on veut supprimer, Nous allons procéder via l'id de l'élément en question. Bien sûr ce n'est pas la seul façon de procéder, libre à vous de tenter d'autres choses !
 
 Bon, ok, on indique quel est l'id de l'élément, mais comment l'utilise t-on ?
 
-Il faut tout dabord indiquer à notre route (eh oui, encore et toujours) que ce fameux id existe.
+Il faut tout dabord indiquer à notre route (et oui, encore et toujours) que ce fameux id existe.
 
 Pour cela on se rend dans notre fichier "todo.py" et on indique dans notre route "delete"
 
@@ -484,7 +486,7 @@ def delete(id):
     return 'coucou'
 ```
 
-une fois ceci fait, on peux utiliser cet id dans notre fonction.
+une fois ceci fait, on peut utiliser cet id dans notre fonction.
 
 ```python
 @app.route('/delete/<id>')
@@ -493,15 +495,15 @@ def delete(id):
     db.session.commit()
     return redirect(url_for('index'))
 ```
-Encore une fois (merci python) le code parle de lui même: 
+Encore une fois (merci python) le code parle de lui même!
 
-quand on clique sur le lien:
+Quand on clique sur le lien:
 
-- On est rediriger vers notre page "delete" 
-- On fais une requête à notre base de donnée pour qu'elle trouve l'elément qui à l'id que l'on cherche (je le convertis en int parce que l'on est jamais trop prudent) et le supprime
+- On est redirigé vers notre page "delete" 
+- On fait une requête à notre base de données pour qu'elle trouve l'elément qui a l'id que l'on cherche (nous le convertissons en int parce que l'on n'est jamais trop prudent) et le supprime
 - On commit le changement dans la base de donnée
 - On redirige vers la page index
 
-Si tout c'est bien passer, vous devriez avoir ce code ci dans vos fichier [todo](todo_final.py), [index](index_final.html) et [layout](layout_final.html)
+Si tout c'est bien passé, vous devriez avoir ce code ci dans vos fichiers [todo](todo_final.py), [index](index_final.html) et [layout](layout_final.html)
 
 Vous avez désormais une to do liste fonctionelle, qui vous permettra de ne jamais plus oublier vos challenges of the week ! 
